@@ -179,7 +179,7 @@ open class SignatureView: UIView {
             return
         }
         
-        let signatureImage = captureSignatureFromView()
+        let signatureImage =  self.createImage()
         if let image = signatureImage {
             delegate?.SignatureViewDidCaptureSignature(view: self, signature: Signature(signature: image))
         } else {
@@ -188,19 +188,6 @@ open class SignatureView: UIView {
     }
     
     /********************************** Private Functions **********************************/
-    
-    private func captureSignatureFromView() -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(bounds.size, signatureIsOpaque, 0.0)
-        
-        guard let context = UIGraphicsGetCurrentContext() else {
-            return nil
-        }
-        
-        layer.render(in: context)
-        let viewImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return viewImage
-    }
     
     private func setTouchPoints(_ touch: UITouch,view: UIView) {
         previousPoint = touch.previousLocation(in: view)
@@ -247,5 +234,21 @@ open class SignatureView: UIView {
 }
 
 
-
+extension UIView {
+    
+    func createImage() -> UIImage? {
+        
+        let rect: CGRect = self.frame
+        
+        UIGraphicsBeginImageContext(rect.size)
+        let context: CGContext = UIGraphicsGetCurrentContext()!
+        self.layer.render(in: context)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return img
+        
+    }
+    
+}
 
